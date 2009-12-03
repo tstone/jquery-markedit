@@ -8,6 +8,6 @@ implements customization, a public api, configurability, and internationalizatio
 *******************************************************************************
 *******************************************************************************
 
-This project is currently in the process of moving over from BitBucket.
+Please see the wiki for installation, configuration, and documentation:
 
-Check back soon for complete wiki/documentation.
+http://wiki.github.com/tstone/jquery-markedit
