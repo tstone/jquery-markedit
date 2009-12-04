@@ -575,7 +575,7 @@
 
         }
         else {
-            
+
             // Set link text/image alt text if a selection is not already present
             if (text) {
                 if (state.select.length === 0 || overwriteSelection) {
