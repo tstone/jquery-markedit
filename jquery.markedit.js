@@ -528,7 +528,7 @@
     //
     //  $.markeditSetLinkOrImage
     //
-    $.fn.markeditSetLinkOrImage = function(image, url) {
+    $.fn.markeditSetLinkOrImage = function(image, url, text, overwriteSelection) {
 
         var state = $(this).markeditGetState();
 
@@ -570,6 +570,13 @@
 
         }
         else {
+            
+            // Set link text/image alt text if a selection is not already present
+            if (text) {
+                if (state.select.length === 0 || overwriteSelection) {
+                    state.select = text;
+                }
+            }
 
             // If we already have a link/image and we're inserting another one
             // just change the URL instead of doubling up the markdown syntax
