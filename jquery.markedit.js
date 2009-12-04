@@ -562,7 +562,7 @@
             MarkEdit.basicPrompt(config, defaultValue, function(promptValue) {  // Ok Click:
                 // IE will loose the selection state unless we re-apply it
                 $(parent_tag).markeditSetState(state);
-                $(parent_tag).markeditSetLinkOrImage(image, promptValue);
+                $(parent_tag).markeditSetLinkOrImage(image, promptValue, text, overwriteSelection);
             }, function(){  // Cancel Click:
                 // IE will loose the selection state unless we re-apply it
                 $(parent_tag).markeditSetState(state);
