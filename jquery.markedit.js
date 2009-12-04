@@ -264,7 +264,7 @@
             if (this.tagName !== 'TEXTAREA') { throw MarkEditLanguage.errors.markeditNotTextarea; }
 
             // If no id, generate a unique one
-            if (typeof($(this).attr('id') === 'undefined')) {
+            if (typeof($(this).attr('id')) === 'undefined') {
                 var uniqueId = 'markedit-' + String(++MarkEditIndex);
                 $(this).attr('id', uniqueId);
             }
