@@ -55,6 +55,7 @@
                 });
                 
                 $(win).children().filter('button').click(function() {
+                    $(results).html();
                     searchFlickrPhotos($(searchBox).val(), function(i, item) {                        
                         var a = $('<a></a>').attr('href', item.url_m).attr('title', item.title);
                         var img = $('<img />').attr('src', item.url_s);
@@ -66,6 +67,7 @@
                             $(this).click(function() {
                                 $('textarea').markeditSetLinkOrImage(true, $(this).attr('href'), $(this).attr('title'));
                                 $(win).dialog('close');
+                                $(win).remove();
                                 return false; 
                             });
                         });
