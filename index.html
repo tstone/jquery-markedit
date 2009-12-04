@@ -4,25 +4,49 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="jquery.markedit.css" />
+	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/ui-darkness/jquery-ui.css" />
+	<style type="text/css">
+	    textarea { min-height: 250px; }
+	</style>
+    
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="showdown.js"></script>
+	<script type="text/javascript" src="jquery.markedit.js"></script>
 
+	<script type="text/javascript">
+    
+	    // Create a MarkEdit editor on page load
+	    $(function(){
+		$('textarea').markedit({
+		    'toolbar' : {
+			'backgroundMode' : 'dark'
+		    }
+		});
+	    });
+    
+	</script>
+	
 	<title>tstone/jquery-markedit @ GitHub</title>
 	
 	<style type="text/css">
 		body {
-  		margin-top: 1.0em;
-  		background-color: #2983f8;
+		margin-top: 1.0em;
+		background-color: #CCCCFF;
 		  font-family: "Helvetica,Arial,FreeSans"; 
-  		color: #000000;
-    }
+		color: #000000;
+		}
     #container {
       margin: 0 auto;
       width: 700px;
     }
-		h1 { font-size: 3.8em; color: #d67c07; margin-bottom: 3px; }
+		h1 { font-size: 3.8em; color: #000033; margin-bottom: 3px; }
 		h1 .small { font-size: 0.4em; }
 		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #d67c07; }
-    h3 { text-align: center; color: #d67c07; }
+		h2 { font-size: 1.5em; color: #000033; padding-top: 20px; }
+    h3 { text-align: center; color: #000033; }
     a { color: #d67c07; }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
     .download { float: right; }
@@ -37,7 +61,7 @@
   <a href="http://github.com/tstone/jquery-markedit"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
   
   <div id="container">
-
+	
     <div class="download">
       <a href="http://github.com/tstone/jquery-markedit/zipball/master">
         <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
@@ -45,23 +69,27 @@
         <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
     </div>
       
-    <h1><a href="http://github.com/tstone/jquery-markedit">jquery-markedit</a> 
-      <span class="small">by <a href="http://github.com/tstone">tstone</a></span></h1>
+    <h1><a href="http://github.com/tstone/jquery-markedit">jquery-markedit</a></h1>
+	
+	<h2>Live Demo</h2>
+	<textarea>
+The built-in toolbar buttons include: bold, italic, insert link, indent quote, indent code, insert image, numbered list, bullet list, heading 1/2, horizontal line, undo, redo, compose mode, and preview mode.
 
-    <div class="description">
-      a jQuery branch/re-write of WMD Editor
-    </div>
+You can easily add your own buttons through a simple button definition and javascript callbacks.  See the [Wiki][1] for details.
 
-    <h2>Dependencies</h2>
-<p>jQuery
-jQuery UI (for default dialogs)</p>
-<h2>License</h2>
-<p>MIT Licensed</p>
-<h2>Authors</h2>
-<p>Chris K. Jester-Young (cky944@gmail.com)<br/>derobins (dana.e.robinson@gmail.com)<br/>T. Stone (wastingtape@gmail.com)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>T. Stone (wastingtape@gmail.com)<br/>      </p>
-
+  [1]: http://wiki.github.com/tstone/jquery-markedit
+	</textarea>
+	
+	<h2>Features</h2>
+	<ul>
+		<li><strong>Built On jQuery/UI</strong> -- Lighter weight code and less cross-browser issues</li>
+		<li><strong>Themeroller Support</strong> -- Use existing or custom jQuery UI Themeroller themes</li>
+		<li><strong><a href="http://wiki.github.com/tstone/jquery-markedit/using-languages">International</a></strong> -- Supports the loading of an alternate language</li>
+		<li><strong>Sensible Defaults</strong> -- You should be able to get up and running with 1 line of javascript</li>
+		<li><strong><a href="http://wiki.github.com/tstone/jquery-markedit/configuration-options">Configurable</a></strong> -- Almost all defaults can be overridden very easily upon initialization</li>
+		<li><strong><a href="http://wiki.github.com/tstone/jquery-markedit/public-api">Public API</a></strong> -- Interact with whatever part you're interested in</li>
+		<li><strong><a href="http://wiki.github.com/tstone/jquery-markedit">Documented</a></strong></li>
+	</ul>
 
     <h2>Download</h2>
     <p>
@@ -77,6 +105,11 @@ jQuery UI (for default dialogs)</p>
     <div class="footer">
       get the source code on GitHub : <a href="http://github.com/tstone/jquery-markedit">tstone/jquery-markedit</a>
     </div>
+    
+    <h2>Documentation</h2>
+    <p>
+	It's all in the <a href="http://wiki.github.com/tstone/jquery-markedit">Wiki</a>.
+    </p>
     
   </div>
 
