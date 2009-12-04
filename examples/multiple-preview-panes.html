@@ -7,6 +7,11 @@
     <style type="text/css">
         textarea { min-height: 250px; }
         .markedit { width: 75%; }
+        
+        .preview pre { margin-left: 10px; padding: 5px; overflow: auto; width: 50%; }
+        #pane1 { font-family: Arial, Helvetica; color: blue; }
+        #pane2 { background-color: black; color: white; }
+        #pane3 { font-family: cursive; color: gray; background-color: orange; }
     </style>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
@@ -18,31 +23,40 @@
 
         // Create a MarkEdit editor on page load
         $(function(){
-           $('textarea').markedit();
+            $('textarea').markedit({
+                'preview' : false,
+                'postload' : function() {
+                    $('div.preview').each(function() {
+                       $('textarea').markeditBindAutoPreview(this); 
+                    });
+                }
+            });           
         });
 
     </script>
 </head>
 <body>
     <textarea>
-MarkEdit Basic Demo
--------------------
+**MarkEdit Basic Demo**
 
-[Lorem Ipsum][1] is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+[Lorem Ipsum][1] is simply dummy text of the printing and typesetting industry.
 
-It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of [Lorem Ipsum][1].
-
-It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.
-
-----------
-
- 1. [Lorem][1]
- 2. Ipsum
- 3. Established
- 4. Reader
- 5. Distracted
+    // MarkEdit for the win!
+    $('textarea').markedit();
+    
 
   [1]: http://www.lipsum.com/
     </textarea>
+    
+    <div class="preview" id="pane1"></div>
+    
+    <hr/>
+    
+    <div class="preview" id="pane2"></div>
+    
+    <hr/>
+    
+    <div class="preview" id="pane3"></div>
+    
 </body>
 </html>

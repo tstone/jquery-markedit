@@ -280,12 +280,12 @@
                 MarkEditHistory[$(this).attr('id')] = { 'undo': [], 'redo': [] };
 
                 // Set current state as first history item
-                var textareaId = $(this).attr('id');
-                MarkEdit.appendHistory($(this).markeditGetState(), textareaId);
+                MarkEdit.appendHistory($(this).markeditGetState(), $(this).attr('id'));
 
                 // Bind events to update history
+                var textarea = $(this);
                 $(this).keyup(function() {
-                    MarkEdit.appendHistory($('#'+textareaId).markeditGetState(), textareaId);
+                    MarkEdit.appendHistory($(textarea).markeditGetState(), $(textarea).attr('id'));
                 });
             }
 
@@ -533,7 +533,7 @@
     //
     //  $.markeditSetLinkOrImage
     //
-    $.fn.markeditSetLinkOrImage = function(image, url) {
+    $.fn.markeditSetLinkOrImage = function(image, url, text, overwriteSelection) {
 
         var state = $(this).markeditGetState();
 
@@ -567,7 +567,7 @@
             MarkEdit.basicPrompt(config, defaultValue, function(promptValue) {  // Ok Click:
                 // IE will loose the selection state unless we re-apply it
                 $(parent_tag).markeditSetState(state);
-                $(parent_tag).markeditSetLinkOrImage(image, promptValue);
+                $(parent_tag).markeditSetLinkOrImage(image, promptValue, text, overwriteSelection);
             }, function(){  // Cancel Click:
                 // IE will loose the selection state unless we re-apply it
                 $(parent_tag).markeditSetState(state);
@@ -575,6 +575,13 @@
 
         }
         else {
+            
+            // Set link text/image alt text if a selection is not already present
+            if (text) {
+                if (state.select.length === 0 || overwriteSelection) {
+                    state.select = text;
+                }
+            }
 
             // If we already have a link/image and we're inserting another one
             // just change the URL instead of doubling up the markdown syntax
