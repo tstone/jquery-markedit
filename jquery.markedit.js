@@ -280,12 +280,12 @@
                 MarkEditHistory[$(this).attr('id')] = { 'undo': [], 'redo': [] };
 
                 // Set current state as first history item
-                var textareaId = $(this).attr('id');
-                MarkEdit.appendHistory($(this).markeditGetState(), textareaId);
+                MarkEdit.appendHistory($(this).markeditGetState(), $(this).attr('id'));
 
                 // Bind events to update history
+                var textarea = $(this);
                 $(this).keyup(function() {
-                    MarkEdit.appendHistory($('#'+textareaId).markeditGetState(), textareaId);
+                    MarkEdit.appendHistory($(textarea).markeditGetState(), $(textarea).attr('id'));
                 });
             }
 
