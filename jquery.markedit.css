@@ -1,10 +1,10 @@
-.markedit { }
+.markedit { clear: both; }
 .markedit textarea { width: 100%; }
 
 .markedit-toolbar { padding: 0.3em; margin: 0; clear: both; height: 22px; -moz-border-radius-topleft:8px; -moz-border-radius-topright:8px; }
 .markedit-toolbar .toolbar-group { margin-right: 0.5em; padding: 0 0 0 5px; float: left; }
 .markedit-toolbar .toggle-group {  }
-.markedit-toolbar .toggle-group button { font-size: 0.65em; font-weight: bold; padding: 0.15em 0.5em; }
+.markedit-toolbar .toggle-group button { font-size: 0.85em; font-weight: bold; padding: 0.15em 0.5em; }
 .markedit-toolbar .toggle-group button:first-child { -moz-border-radius-bottomleft:11px; -moz-border-radius-topleft:11px; -moz-border-radius-bottomright:0; -moz-border-radius-topright:0; }
 .markedit-toolbar .toggle-group button:last-child { -moz-border-radius-bottomleft:0; -moz-border-radius-topleft:0; -moz-border-radius-bottomright:11px; -moz-border-radius-topright:11px; }
 

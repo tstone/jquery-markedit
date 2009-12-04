@@ -289,7 +289,7 @@
                 });
             }
 
-            // Wrap and add toolbar
+            // Wrap our whole widget in a <div>
             $(this).wrap('<div class="markedit"></div>');
             var parent = $(this).parent();
 
@@ -308,34 +308,39 @@
             var toolbar = $(parent).markeditToolbar(options.toolbar, options.foregroundMode);
 
             // Create preview pane
-            var previewPane = null;
             if (options.preview !== false) {
-                parent.append('<div class="markedit-preview ui-widget-content"></div>');
-                $(parent).children().filter('.markedit-preview').each(function() {
-                    previewPane = $(this);
-                });
-            }
+                var previewPane = $('<div class="markedit-preview ui-widget-content"></div>');
 
-            // Set initial state for preview if enabled (now that it's created)
-            if (options.preview === 'toolbar') {
+                // Set initial state for preview if enabled (now that it's created)
+                if (options.preview === 'toolbar') {
+                    $(parent).append(previewPane);
 
-                var editButton = $(toolbar).children().find('button.edit');
-                editButton.addClass('ui-state-active');
-                editButton.parent().addClass('preview');
+                    var editButton = $(toolbar).children().find('button.edit');
+                    editButton.addClass('ui-state-active');
+                    editButton.parent().addClass('preview');
 
-                // Hide preview initially
-                $(previewPane).addClass('toggle-preview');
-                $(previewPane).attr('style', 'display:none');
+                    // Hide preview initially
+                    $(previewPane).addClass('toggle-preview');
+                    $(previewPane).attr('style', 'display:none');
 
-            }
-            else if (options.preview === 'bottom' || options.preview === 'below') {
+                }
+                else if (options.preview === 'bottom' || options.preview === 'below') {
 
-                $(previewPane).addClass('bottom-preview');
-                $(this).markeditBindAutoPreview(previewPane);
+                    $(parent).append(previewPane);
+                    $(previewPane).addClass('bottom-preview');
+                    $(this).markeditBindAutoPreview(previewPane);
 
-            }
-            else if (options.preview !== false) {
-                throw "Preview option '" + options.preview + "' is not recognized.";
+                }
+                else if (options.preview === 'top' || options.preview === 'above') {
+
+                    $(parent).prepend(previewPane);
+                    $(previewPane).addClass('top-preview');
+                    $(this).markeditBindAutoPreview(previewPane);
+
+                }
+                else if (options.preview !== false) {
+                    throw "Preview option '" + options.preview + "' is not recognized.";
+                }
             }
 
             // Fire postload event
@@ -350,7 +355,7 @@
     $.fn.markedit.defaults = {
 
         // features
-        'preview': 'toolbar',       // Possible values:  toolbar, bottom || below, false
+        'preview': 'toolbar',       // Possible values:  toolbar, bottom || below, above || top, false
         'history': true,
 
         // functions
