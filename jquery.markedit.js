@@ -171,7 +171,7 @@
 
         $(this).each(function() {
 
-            var tag = $('<button type="submit">&nbsp;</button>').appendTo(this);
+            var tag = $('<button type="button">&nbsp;</button>').appendTo(this);
 
             // Set attributes
             if (typeof(button.text) !== 'undefined') {
