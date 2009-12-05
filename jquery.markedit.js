@@ -358,6 +358,10 @@
         'preview': 'toolbar',       // Possible values:  toolbar, bottom || below, above || top, false
         'history': true,
 
+        // markup
+        'newlineToBr': true,
+        'noPWrap': true,
+
         // functions
         'addHistoryButtons': true,
         'toolbar': $(this).markeditToolbar.defaults,
@@ -835,7 +839,15 @@
         var textarea = MarkEdit.getTextArea(this);
         var text = $(textarea).val();
         if (typeof(text) !== 'undefined') {
-            return MarkEditShowDown.makeHtml($(this).val());
+            var html =  MarkEditShowDown.makeHtml($(this).val());
+
+            // Convert newlines to <br/>
+            //html = html.replace(/(<p>.*)\n(.*<\/p>)/g, '$1<br/>$3');
+
+            // Drop wrapped <p> tags
+            //html = html.replace(/^<p>/g, '').replace(/<\/p>$/g, '');
+
+            return html;
         }
         else {
             return '';
