@@ -1258,10 +1258,22 @@
 
                 // Standardize selection to include prefix
                 var bsMatch = selectPattern.exec(state.beforeSelect);
+                
+                // Check alt patterns as well
+                if (bsMatch === null) {
+                    $.each(altSelectPatterns, function(i, pattern){
+                        var match = pattern.exec(state.beforeSelect);
+                        if (match) {
+                            bsMatch = match;
+                        }
+                    });
+                }
+                
                 if (bsMatch !== null) {
                     state.beforeSelect = state.beforeSelect.substr(0, state.beforeSelect.length - bsMatch[1].length);
                     state.select = bsMatch[1] + state.select;
                 }
+                //MarkEdit.alertState(state);
 
                 // Enumerate lines and check what we've got
                 var list = state.select.split('\n');
