@@ -1040,9 +1040,22 @@
             //  Trims the state.select, but moves the white space
             //  to the beforeSelect/afterSelect
             //
-            stateTrim: function(state) {
-                var lead = (/^\s+/).exec(state.select);
-                var tail = (/\s+$/).exec(state.select);
+            stateTrim: function(state, newlineOnly) {
+                
+                var leadPattern;
+                var tailPattern;
+                
+                if (newlineOnly) {
+                    leadPattern = /^(?:\r?\n)+/;
+                    tailPattern = /(?:\r?\n)+$/;
+                }
+                else {
+                    leadPattern = /^\s+/;
+                    tailPattern = /\s+$/;
+                }
+                
+                var lead = leadPattern.exec(state.select);
+                var tail = tailPattern.exec(state.select);
 
                 if (lead) {
                     state.beforeSelect += lead;
@@ -1241,7 +1254,7 @@
             //
             setPrefix: function(state, selectPattern, altSelectPatterns, getPrefixCallback) {
 
-                state = MarkEdit.stateTrim(state);
+                state = MarkEdit.stateTrim(state, true);
 
                 // Standardize selection to include prefix
                 var bsMatch = selectPattern.exec(state.beforeSelect);
@@ -1322,6 +1335,16 @@
                 {
                     alert(value);
                 }
+            },
+            
+            
+            //
+            //  Popup state in a readable way
+            //
+            alertState: function(state) {
+                alert(
+                    'beforeSelect:\n[' + state.beforeSelect + ']\n\nselect:\n[' + state.select + ']\n\nafaterSelect:\n[' + state.afterSelect + ']'
+                );
             },
 
 
