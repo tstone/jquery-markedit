@@ -841,10 +841,11 @@
         if (typeof(text) !== 'undefined') {
             var html =  MarkEditShowDown.makeHtml($(this).val());
             html = html.replace(/\r/g, '');
-            
+
             // Convert newlines to <br/>
-            var lineBreakInP = /(<p>[^\n]+?)\n([^<]+?<\/p>)/g;
+            var lineBreakInP = /(<p>[^\n]+?)\n((?:.|\n)*<\/p>)/g;
             var lineBreaksRemaining = lineBreakInP.exec(html);
+
             while (lineBreaksRemaining !== null) {
                 html = html.replace(lineBreakInP, '$1<br />$2');
                 lineBreaksRemaining = lineBreakInP.exec(html);
@@ -1041,10 +1042,10 @@
             //  to the beforeSelect/afterSelect
             //
             stateTrim: function(state, newlineOnly) {
-                
+
                 var leadPattern;
                 var tailPattern;
-                
+
                 if (newlineOnly) {
                     leadPattern = /^(?:\r?\n)+/;
                     tailPattern = /(?:\r?\n)+$/;
@@ -1053,7 +1054,7 @@
                     leadPattern = /^\s+/;
                     tailPattern = /\s+$/;
                 }
-                
+
                 var lead = leadPattern.exec(state.select);
                 var tail = tailPattern.exec(state.select);
 
@@ -1258,7 +1259,7 @@
 
                 // Standardize selection to include prefix
                 var bsMatch = selectPattern.exec(state.beforeSelect);
-                
+
                 // Check alt patterns as well
                 if (bsMatch === null) {
                     $.each(altSelectPatterns, function(i, pattern){
@@ -1268,7 +1269,7 @@
                         }
                     });
                 }
-                
+
                 if (bsMatch !== null) {
                     state.beforeSelect = state.beforeSelect.substr(0, state.beforeSelect.length - bsMatch[1].length);
                     state.select = bsMatch[1] + state.select;
@@ -1348,8 +1349,8 @@
                     alert(value);
                 }
             },
-            
-            
+
+
             //
             //  Popup state in a readable way
             //
