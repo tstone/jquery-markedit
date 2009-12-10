@@ -841,13 +841,13 @@
         if (typeof(text) !== 'undefined') {
             var html =  MarkEditShowDown.makeHtml($(this).val());
             html = html.replace(/\r/g, '');
-            
+
             // Convert newlines to <br/> inside a <p>
             var lineBreakInP = /(<p>(?:[\S\s](?!<\/p>))*)\n([\S\s]*?<\/p>)/g;
             var lineBreaksRemaining = lineBreakInP.exec(html);
 
             while (lineBreaksRemaining !== null) {
-                html = html.replace(lineBreakInP, '$1<br />$2</p>');
+                html = html.replace(lineBreakInP, '$1<br />$2');
                 lineBreaksRemaining = lineBreakInP.exec(html);
             }
 
