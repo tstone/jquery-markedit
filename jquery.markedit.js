@@ -696,12 +696,6 @@
             return '> ';
         });
 
-        // Make sure we have a doubleline ending it
-        state.beforeSelect = state.beforeSelect.rightNewlineTrim();
-        state.beforeSelect += '\n\n';
-        state.afterSelect = state.afterSelect.leftNewlineTrim();
-        state.afterSelect = '\n\n' + state.afterSelect;
-
         $(this).markeditSetState(state);
     };
 
@@ -733,12 +727,6 @@
             }
             return '';
         });
-
-        // Make sure we have a doubleline begin/ending it
-        state.beforeSelect = state.beforeSelect.rightNewlineTrim();
-        state.beforeSelect += '\n\n';
-        state.afterSelect = state.afterSelect.leftNewlineTrim();
-        state.afterSelect = '\n\n' + state.afterSelect;
 
         $(this).markeditSetState(state);
         return this;
@@ -1271,50 +1259,80 @@
                     state.beforeSelect = state.beforeSelect.substr(0, state.beforeSelect.length - bsMatch[1].length);
                     state.select = bsMatch[1] + state.select;
                 }
-                //MarkEdit.alertState(state);
 
-                // Enumerate lines and check what we've got
-                var list = state.select.split('\n');
-                state.select = '';
+                // Standardize line breaks on state
+                state.beforeSelect = state.beforeSelect.rightNewlineTrim();
 
-                for (var i = 0; i < list.length; i++) {
+                // Check if we have an actual selection or not
+                var lastPrefix = '';
+                if (state.select.length > 0) {
 
-                    // Find current type (toggle off if found)
-                    var text;
-                    var typeMatch = selectPattern.exec(list[i]);
-                    if (typeMatch !== null) {
-                        state.select += typeMatch[2].trim() + '\n';
-                    }
-                    else {
-                        var prefix = getPrefixCallback(state);
+                    // Enumerate lines and check what we've got
+                    var list = state.select.split('\n');
+                    state.select = '';
 
-                        // Find alternate type (switch prefix if found)
-                        var altPatternFound = false;
-                        for (var j = 0; j < altSelectPatterns.length; j++) {
-                            var altTypeMatch = altSelectPatterns[j].exec(list[i]);
-                            if (altTypeMatch !== null) {
-                                text = altTypeMatch[2].trim();
-                                if (text.length > 0) {
-                                    state.select += prefix + altTypeMatch[2].trim() + '\n';
+                    for (var i = 0; i < list.length; i++) {
+
+                        // Find current type (toggle off if found)
+                        var text = '';
+                        var typeMatch = selectPattern.exec(list[i]);
+
+                        if (typeMatch !== null) {
+                            state.select += typeMatch[2].trim() + '\n';
+                        }
+                        else {
+                            var prefix = getPrefixCallback(state);
+
+                            // Find alternate type (switch prefix if found)
+                            var altPatternFound = false;
+                            for (var j = 0; j < altSelectPatterns.length; j++) {
+
+                                var altTypeMatch = altSelectPatterns[j].exec(list[i]);
+
+                                if (altTypeMatch !== null) {
+                                    // Grab list item text
+                                    if (typeof(altTypeMatch[2]) !== 'undefined' ) {
+                                        text = altTypeMatch[2].trim();
+                                    }
+
+                                    // Adjust state accordingly
+                                    state.select += prefix + text + '\n';
+                                    lastPrefix = prefix;
+                                    altPatternFound = true;
+                                    break;
                                 }
 
-                                altPatternFound = true;
-                                break;
                             }
-                        }
 
-                        // Current/Alt type not found, add new entry
-                        if (!altPatternFound) {
-                            text = list[i].trim();
-                            if (text.length > 0) {
-                                state.select += prefix + list[i].trim() + '\n';
+                            // Current/Alt type not found, add new entry
+                            if (!altPatternFound) {
+                                text = list[i].trim();
+                                if (text.length > 0) {
+                                    state.select += prefix + list[i].trim() + '\n';
+                                }
                             }
                         }
                     }
+
+                    // Fixup the new lines in before select
+                    state.select = state.select.rightNewlineTrim();
+                    if (state.select === lastPrefix) {
+                        state.beforeSelect += '\n\n' + state.select;
+                        state.select = '';
+                    }
+                    else {
+                        state.beforeSelect += '\n\n';
+                    }
+
+                }
+                else {
+                    // Nothing was selected, so insert empty line
+                    state.beforeSelect += '\n\n' + getPrefixCallback(state);
                 }
 
-                // Loose trailing wierdness
-                state.select = state.select.rtrim();
+                state.afterSelect = state.afterSelect.leftNewlineTrim();
+                state.afterSelect = '\n\n' + state.afterSelect;
+
                 return state;
             },
 
