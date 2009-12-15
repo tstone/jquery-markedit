@@ -1,6 +1,5 @@
-// Confirm jQuery/Ui is present.  If not give a friendly message.
-//if (!jQuery) { throw "jQuery is required to be loaded before markedit can be used."; }
-//if (!jQuery.ui) { throw "jQuery UI is required to be loaded before markedit can be used."; }
+// Confirm jQuery is present.  If not give a friendly message.
+if (!jQuery) { throw "jQuery is required to be loaded before markedit can be used."; }
 
 (function($) {
 
@@ -289,7 +288,7 @@
                 });
             }
 
-            // Wrap and add toolbar
+            // Wrap our whole widget in a <div>
             $(this).wrap('<div class="markedit"></div>');
             var parent = $(this).parent();
 
@@ -308,34 +307,39 @@
             var toolbar = $(parent).markeditToolbar(options.toolbar, options.foregroundMode);
 
             // Create preview pane
-            var previewPane = null;
             if (options.preview !== false) {
-                parent.append('<div class="markedit-preview ui-widget-content"></div>');
-                $(parent).children().filter('.markedit-preview').each(function() {
-                    previewPane = $(this);
-                });
-            }
+                var previewPane = $('<div class="markedit-preview ui-widget-content"></div>');
 
-            // Set initial state for preview if enabled (now that it's created)
-            if (options.preview === 'toolbar') {
+                // Set initial state for preview if enabled (now that it's created)
+                if (options.preview === 'toolbar') {
+                    $(parent).append(previewPane);
 
-                var editButton = $(toolbar).children().find('button.edit');
-                editButton.addClass('ui-state-active');
-                editButton.parent().addClass('preview');
+                    var editButton = $(toolbar).children().find('button.edit');
+                    editButton.addClass('ui-state-active');
+                    editButton.parent().addClass('preview');
 
-                // Hide preview initially
-                $(previewPane).addClass('toggle-preview');
-                $(previewPane).attr('style', 'display:none');
+                    // Hide preview initially
+                    $(previewPane).addClass('toggle-preview');
+                    $(previewPane).attr('style', 'display:none');
 
-            }
-            else if (options.preview === 'bottom' || options.preview === 'below') {
+                }
+                else if (options.preview === 'bottom' || options.preview === 'below') {
 
-                $(previewPane).addClass('bottom-preview');
-                $(this).markeditBindAutoPreview(previewPane);
+                    $(parent).append(previewPane);
+                    $(previewPane).addClass('bottom-preview');
+                    $(this).markeditBindAutoPreview(previewPane);
 
-            }
-            else if (options.preview !== false) {
-                throw "Preview option '" + options.preview + "' is not recognized.";
+                }
+                else if (options.preview === 'top' || options.preview === 'above') {
+
+                    $(parent).prepend(previewPane);
+                    $(previewPane).addClass('top-preview');
+                    $(this).markeditBindAutoPreview(previewPane);
+
+                }
+                else if (options.preview !== false) {
+                    throw "Preview option '" + options.preview + "' is not recognized.";
+                }
             }
 
             // Fire postload event
@@ -350,8 +354,12 @@
     $.fn.markedit.defaults = {
 
         // features
-        'preview': 'toolbar',       // Possible values:  toolbar, bottom || below, false
+        'preview': 'toolbar',       // Possible values:  toolbar, bottom || below, above || top, false
         'history': true,
+
+        // markup
+        'newlineToBr': true,
+        'noPWrap': true,
 
         // functions
         'addHistoryButtons': true,
@@ -570,7 +578,7 @@
 
         }
         else {
-            
+
             // Set link text/image alt text if a selection is not already present
             if (text) {
                 if (state.select.length === 0 || overwriteSelection) {
@@ -687,12 +695,6 @@
             return '> ';
         });
 
-        // Make sure we have a doubleline ending it
-        state.beforeSelect = state.beforeSelect.rightNewlineTrim();
-        state.beforeSelect += '\n\n';
-        state.afterSelect = state.afterSelect.leftNewlineTrim();
-        state.afterSelect = '\n\n' + state.afterSelect;
-
         $(this).markeditSetState(state);
     };
 
@@ -724,12 +726,6 @@
             }
             return '';
         });
-
-        // Make sure we have a doubleline begin/ending it
-        state.beforeSelect = state.beforeSelect.rightNewlineTrim();
-        state.beforeSelect += '\n\n';
-        state.afterSelect = state.afterSelect.leftNewlineTrim();
-        state.afterSelect = '\n\n' + state.afterSelect;
 
         $(this).markeditSetState(state);
         return this;
@@ -830,7 +826,19 @@
         var textarea = MarkEdit.getTextArea(this);
         var text = $(textarea).val();
         if (typeof(text) !== 'undefined') {
-            return MarkEditShowDown.makeHtml($(this).val());
+            var html =  MarkEditShowDown.makeHtml($(this).val());
+            html = html.replace(/\r/g, '');
+
+            // Convert newlines to <br/> inside a <p>
+            var lineBreakInP = /(<p>(?:[\S\s](?!<\/p>))*)\n([\S\s]*?<\/p>)/g;
+            var lineBreaksRemaining = lineBreakInP.exec(html);
+
+            while (lineBreaksRemaining !== null) {
+                html = html.replace(lineBreakInP, '$1<br />$2');
+                lineBreaksRemaining = lineBreakInP.exec(html);
+            }
+
+            return html;
         }
         else {
             return '';
@@ -1017,9 +1025,22 @@
             //  Trims the state.select, but moves the white space
             //  to the beforeSelect/afterSelect
             //
-            stateTrim: function(state) {
-                var lead = (/^\s+/).exec(state.select);
-                var tail = (/\s+$/).exec(state.select);
+            stateTrim: function(state, newlineOnly) {
+
+                var leadPattern;
+                var tailPattern;
+
+                if (newlineOnly) {
+                    leadPattern = /^(?:\r?\n)+/;
+                    tailPattern = /(?:\r?\n)+$/;
+                }
+                else {
+                    leadPattern = /^\s+/;
+                    tailPattern = /\s+$/;
+                }
+
+                var lead = leadPattern.exec(state.select);
+                var tail = tailPattern.exec(state.select);
 
                 if (lead) {
                     state.beforeSelect += lead;
@@ -1218,57 +1239,99 @@
             //
             setPrefix: function(state, selectPattern, altSelectPatterns, getPrefixCallback) {
 
-                state = MarkEdit.stateTrim(state);
+                state = MarkEdit.stateTrim(state, true);
 
                 // Standardize selection to include prefix
                 var bsMatch = selectPattern.exec(state.beforeSelect);
+
+                // Check alt patterns as well
+                if (bsMatch === null) {
+                    $.each(altSelectPatterns, function(i, pattern){
+                        var match = pattern.exec(state.beforeSelect);
+                        if (match) {
+                            bsMatch = match;
+                        }
+                    });
+                }
+
                 if (bsMatch !== null) {
                     state.beforeSelect = state.beforeSelect.substr(0, state.beforeSelect.length - bsMatch[1].length);
                     state.select = bsMatch[1] + state.select;
                 }
 
-                // Enumerate lines and check what we've got
-                var list = state.select.split('\n');
-                state.select = '';
+                // Standardize line breaks on state
+                state.beforeSelect = state.beforeSelect.rightNewlineTrim();
 
-                for (var i = 0; i < list.length; i++) {
+                // Check if we have an actual selection or not
+                var lastPrefix = '';
+                if (state.select.length > 0) {
 
-                    // Find current type (toggle off if found)
-                    var text;
-                    var typeMatch = selectPattern.exec(list[i]);
-                    if (typeMatch !== null) {
-                        state.select += typeMatch[2].trim() + '\n';
-                    }
-                    else {
-                        var prefix = getPrefixCallback(state);
+                    // Enumerate lines and check what we've got
+                    var list = state.select.split('\n');
+                    state.select = '';
 
-                        // Find alternate type (switch prefix if found)
-                        var altPatternFound = false;
-                        for (var j = 0; j < altSelectPatterns.length; j++) {
-                            var altTypeMatch = altSelectPatterns[j].exec(list[i]);
-                            if (altTypeMatch !== null) {
-                                text = altTypeMatch[2].trim();
-                                if (text.length > 0) {
-                                    state.select += prefix + altTypeMatch[2].trim() + '\n';
+                    for (var i = 0; i < list.length; i++) {
+
+                        // Find current type (toggle off if found)
+                        var text = '';
+                        var typeMatch = selectPattern.exec(list[i]);
+
+                        if (typeMatch !== null) {
+                            state.select += typeMatch[2].trim() + '\n';
+                        }
+                        else {
+                            var prefix = getPrefixCallback(state);
+
+                            // Find alternate type (switch prefix if found)
+                            var altPatternFound = false;
+                            for (var j = 0; j < altSelectPatterns.length; j++) {
+
+                                var altTypeMatch = altSelectPatterns[j].exec(list[i]);
+
+                                if (altTypeMatch !== null) {
+                                    // Grab list item text
+                                    if (typeof(altTypeMatch[2]) !== 'undefined' ) {
+                                        text = altTypeMatch[2].trim();
+                                    }
+
+                                    // Adjust state accordingly
+                                    state.select += prefix + text + '\n';
+                                    lastPrefix = prefix;
+                                    altPatternFound = true;
+                                    break;
                                 }
 
-                                altPatternFound = true;
-                                break;
                             }
-                        }
 
-                        // Current/Alt type not found, add new entry
-                        if (!altPatternFound) {
-                            text = list[i].trim();
-                            if (text.length > 0) {
-                                state.select += prefix + list[i].trim() + '\n';
+                            // Current/Alt type not found, add new entry
+                            if (!altPatternFound) {
+                                text = list[i].trim();
+                                if (text.length > 0) {
+                                    state.select += prefix + list[i].trim() + '\n';
+                                }
                             }
                         }
                     }
+
+                    // Fixup the new lines in before select
+                    state.select = state.select.rightNewlineTrim();
+                    if (state.select === lastPrefix) {
+                        state.beforeSelect += '\n\n' + state.select;
+                        state.select = '';
+                    }
+                    else {
+                        state.beforeSelect += '\n\n';
+                    }
+
+                }
+                else {
+                    // Nothing was selected, so insert empty line
+                    state.beforeSelect += '\n\n' + getPrefixCallback(state);
                 }
 
-                // Loose trailing wierdness
-                state.select = state.select.rtrim();
+                state.afterSelect = state.afterSelect.leftNewlineTrim();
+                state.afterSelect = '\n\n' + state.afterSelect;
+
                 return state;
             },
 
@@ -1299,6 +1362,16 @@
                 {
                     alert(value);
                 }
+            },
+
+
+            //
+            //  Popup state in a readable way
+            //
+            alertState: function(state) {
+                alert(
+                    'beforeSelect:\n[' + state.beforeSelect + ']\n\nselect:\n[' + state.select + ']\n\nafaterSelect:\n[' + state.afterSelect + ']'
+                );
             },
 
 
