@@ -13,7 +13,7 @@ MarkEditLanguage = function() {
 
         'defaultButtons': {
             'bold': {
-                'tip': '大胆'
+                'tip': '粗体'
             },
             'italic': {
                 'tip': '斜体'
@@ -25,22 +25,28 @@ MarkEditLanguage = function() {
                 'tip': '插入图像'
             },
             'code': {
-                'tip': '代码示例'
+                'tip': '插入代码'
             },
             'quote': {
                 'tip': '大段引用'
             },
             'numberlist': {
-                'tip': '编号列表'
+                'tip': '数字列表'
             },
             'bulletlist': {
-                'tip': '项目符号列表'
+                'tip': '符号列表'
             },
             'line': {
                 'tip': '水平线'
             },
             'heading': {
                 'tip': '标题'
+            },
+            'undo': {
+                'tip': '撤销'
+            },
+            'redo': {
+                'tip': '恢复'
             },
             'edit': {
                 'text': '撰写',
